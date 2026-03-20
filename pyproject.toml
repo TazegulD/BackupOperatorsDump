@@ -1,0 +1,29 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "backupoperatorsdump"
+version = "3.0.0"
+description = "Backup Operators to Domain Admin — full attack chain via SeBackupPrivilege + SeRestorePrivilege (DSRM PtH → DCSync)"
+readme = "README.md"
+license = {text = "MIT"}
+requires-python = ">=3.8"
+dependencies = [
+    "impacket>=0.11.0",
+]
+keywords = ["pentest", "active-directory", "backup-operators", "dcsync", "dsrm", "impacket"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Topic :: Security",
+]
+
+[project.urls]
+Homepage = "https://github.com/TazeguID/BackupOperatorsDump"
+
+[project.scripts]
+backupoperatorsdump = "backup_dc_dump:main"
+
+[tool.setuptools]
+py-modules = ["backup_dc_dump"]
