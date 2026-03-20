@@ -39,19 +39,19 @@ With local admin, the SECURITY hive becomes accessible. It contains `$MACHINE.AC
 ### pipx (recommended)
 
 ```bash
-pipx install git+https://github.com/TazeguID/BackupOperatorsDump.git
+pipx install git+https://github.com/Doguc4nTazegul/BackupOperatorsDump.git
 ```
 
 ### pip
 
 ```bash
-pip install git+https://github.com/TazeguID/BackupOperatorsDump.git
+pip install git+https://github.com/Doguc4nTazegul/BackupOperatorsDump.git
 ```
 
 ### From source
 
 ```bash
-git clone https://github.com/TazeguID/BackupOperatorsDump.git
+git clone https://github.com/Doguc4nTazegul/BackupOperatorsDump.git
 cd BackupOperatorsDump
 pip install .
 ```

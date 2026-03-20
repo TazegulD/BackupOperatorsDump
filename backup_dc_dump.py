@@ -25,7 +25,7 @@ Requirements:
     - Remote Registry service reachable (TCP/445, winreg named pipe)
     - Target must be a Domain Controller
 
-Author: github.com/TazeguID
+Author: github.com/Doguc4nTazegul
 License: MIT
 """
 

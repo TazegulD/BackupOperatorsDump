@@ -20,7 +20,7 @@ classifiers = [
 ]
 
 [project.urls]
-Homepage = "https://github.com/TazeguID/BackupOperatorsDump"
+Homepage = "https://github.com/Doguc4nTazegul/BackupOperatorsDump"
 
 [project.scripts]
 backupoperatorsdump = "backup_dc_dump:main"
