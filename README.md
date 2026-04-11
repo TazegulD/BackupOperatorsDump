@@ -180,6 +180,21 @@ $ backupoperatorsdump -t 192.168.1.200 -u svc_ldapadsecure -p 'BackupOps2026!' -
       DSRM Admin:     3b9d5f8125d916785ea7346e32f3c158
       $MACHINE.ACC:   55f0450a567294cdd7024cf36582d07b
 ```
+## ⚠️ Operational Considerations & Limitations
+
+While this tool performs flawlessly in default Active Directory configurations, operators should be aware of the following architectural and OPSEC limitations in hardened environments:
+
+* **Remote Registry Dependency (`WinReg`):** The tool relies on the `WinReg` RPC endpoint. In modern and hardened environments (Windows Server 2016+), the `RemoteRegistry` service may be set to *Manual* or *Disabled* by default. If the service is not running, Phase 1 will fail with an `RPC_S_SERVER_UNAVAILABLE` error. Currently, operators must manually start the service (e.g., via SVCCTL/WMI) before execution.
+* **Privilege Stripping via GPO:** By default, the Backup Operators group possesses both `SeBackupPrivilege` and `SeRestorePrivilege`. However, mature Tier-0 hardening configurations may strip `SeRestorePrivilege` from this group. If missing, Phase 2 (`DsrmAdminLogonBehavior` patching) will fail, preventing the DSRM PtH attack.
+* **EDR & Telemetry (API Hooking):** Although `SeBackupPrivilege` overrides the OS-level DACL checks, it does not bypass EDR Kernel Callbacks. Remote `RegSaveKey` calls targeting the `SAM` and `SYSTEM` hives are heavily monitored by modern EDRs and may be blocked or flagged as credential dumping.
+* **OPSEC & State Restoration (Graceful Exit):** In Phase 2, the tool modifies `DsrmAdminLogonBehavior` to `2` and attempts to clean it up in Phase 4. **Warning:** If the tool crashes or the network connection drops during Phase 3 (DCSync), the registry value will remain `2`, inadvertently leaving a persistent DSRM network backdoor. Operators *must* manually verify cleanup if execution is interrupted.
+
+
+## 🛠️ Planned Features (To-Do)
+* [ ] Auto-start `RemoteRegistry` service via SMB/SVCCTL if reachable but not running.
+* [ ] Implement robust `try/finally` blocks to guarantee OPSEC cleanup (`DsrmAdminLogonBehavior` restoration) even on fatal crashes.
+
+
 
 ## Prerequisites
 
