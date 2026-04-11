@@ -190,10 +190,6 @@ While this tool performs flawlessly in default Active Directory configurations, 
 * **OPSEC & State Restoration (Graceful Exit):** In Phase 2, the tool modifies `DsrmAdminLogonBehavior` to `2` and attempts to clean it up in Phase 4. **Warning:** If the tool crashes or the network connection drops during Phase 3 (DCSync), the registry value will remain `2`, inadvertently leaving a persistent DSRM network backdoor. Operators *must* manually verify cleanup if execution is interrupted.
 
 
-## 🛠️ Planned Features (To-Do)
-* [ ] Auto-start `RemoteRegistry` service via SMB/SVCCTL if reachable but not running.
-* [ ] Implement robust `try/finally` blocks to guarantee OPSEC cleanup (`DsrmAdminLogonBehavior` restoration) even on fatal crashes.
-
 
 
 ## Prerequisites
